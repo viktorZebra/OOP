@@ -3,7 +3,7 @@
 
 int LoadModelFromFile(Figure& myFigure, char* fileName)
 {
-	FreePrevFigure(myFigure);
+	Figure bufFigure = InitFig(bufFigure);
 
 	FILE* file = fopen(fileName, "r");
 
@@ -12,22 +12,36 @@ int LoadModelFromFile(Figure& myFigure, char* fileName)
 		return OPEN_FILE_ERROR;
 	}
 
-	int codeError = ReadCount(myFigure.points, myFigure.links, file);
+	int codeError = ReadCount(bufFigure.points, bufFigure.links, file);
 
 	if (!codeError)
 	{
-		codeError = AllocMemmoryFig(myFigure.points, myFigure.links);
+		codeError = AllocMemmoryFig(bufFigure.points, bufFigure.links);
 	}
 	
 	if (!codeError)
 	{
-		codeError = ReadAllPoints(file, myFigure.points);
+		codeError = ReadAllPoints(file, bufFigure.points);
 	}
 
 	if (!codeError)
 	{
-		codeError = ReadAllLinks(file, myFigure.links);
+		codeError = ReadAllLinks(file, bufFigure.links);
 	}
+
+	if (codeError || codeError == ALLOC_MEMORY_ERROR)
+	{
+		codeError = INPUT_ERROR;
+	}
+	else
+	{
+		FreePrevFigure(myFigure);
+		CopyCountPointsAndLinks(myFigure, bufFigure);
+		AllocMemmoryFig(myFigure.points, myFigure.links);
+		CopyFig(myFigure, bufFigure);
+	}
+
+	FreeMemory(bufFigure);
 
 	fclose(file);
 
@@ -70,11 +84,8 @@ Figure& InitFig(Figure& myFigure)
 	return myFigure;
 }
 
-/*void CopyFig(Figure& myFigure, Figure& bufFigure)
+void CopyFig(Figure& myFigure, Figure& bufFigure)
 {
-	myFigure.links.countLinks = bufFigure.links.countLinks;
-	myFigure.points.countPoints = bufFigure.points.countPoints;
-
 	for (int i = 0; i < bufFigure.links.countLinks; i++)
 	{
 		myFigure.links.arrayLinks[i].from = bufFigure.links.arrayLinks[i].from;
@@ -89,5 +100,11 @@ Figure& InitFig(Figure& myFigure)
 
 		myFigure.points.arrayPoints[i].number = bufFigure.points.arrayPoints[i].number;
 	}
-}*/
+}
+
+void CopyCountPointsAndLinks(Figure& myFigure, Figure& bufFigure)
+{
+	myFigure.links.countLinks = bufFigure.links.countLinks;
+	myFigure.points.countPoints = bufFigure.points.countPoints;
+}
 
