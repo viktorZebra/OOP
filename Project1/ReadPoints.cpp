@@ -1,6 +1,6 @@
 #include "ReadPoints.h"
 
-int ReadPoints(FILE *file, MyPoint* arrayPoints, int countPoints)
+int ReadPoints(MyPoint* arrayPoints, int countPoints, FILE* file)
 {
 	int codeError = OK;
 
@@ -27,7 +27,7 @@ int ReadPoint(MyPoint &point, FILE* file)
 	return codeError;
 }
 
-int ReadAllPoints(FILE* file, Points points)
+int ReadAllPoints(Points points, FILE* file)
 {
-	return ReadPoints(file, points.arrayPoints, points.countPoints);
+	return ReadPoints(points.arrayPoints, points.countPoints, file);
 }

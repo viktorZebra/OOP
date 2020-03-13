@@ -26,5 +26,10 @@ int MovePoints(MyPoint* arrayPoints, int countPoints, MoveVal val)
 
 int MoveFigure(Figure& myFigure, MoveVal val)
 {
-    return MovePoints(myFigure.points.arrayPoints, myFigure.points.countPoints, val);
+    return MoveArrayPoints(myFigure.points, val);
+}
+
+int MoveArrayPoints(Points& points, MoveVal val)
+{
+    return MovePoints(points.arrayPoints, points.countPoints, val);
 }

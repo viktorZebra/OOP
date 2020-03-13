@@ -14,5 +14,6 @@ typedef struct
 void ScalePoint(MyPoint& point, ScaleVal val);
 int ScalePoints(MyPoint* arrayPoints, int countPoints, ScaleVal val);
 int ScaleFigure(Figure& myFigure, ScaleVal val);
+int ScaleArrayPoints(Points& points, ScaleVal val);
 
 #endif 

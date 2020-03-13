@@ -7,9 +7,20 @@ using namespace System::Drawing;
 #include "WrappingFuncs.h"
 #include <cmath>
 
-MyPoint GetPoint(MyPoint* arrayPoints, int number);
-MyPoint PointTransform(MyPoint point, System::Windows::Forms::Panel^ Panel);
-void DrawFigure(Figure& myFigure, System::Windows::Forms::Panel^ Panel, Graphics^ g);
-void DrawLine(double x1, double y1, double x2, double y2, Graphics^ g);
+typedef struct
+{
+	int width;
+	int height;
+}DrawFormInfo;
+
+typedef Graphics^ MyGraphics;
+typedef System::Windows::Forms::Panel^ MyPanel;
+
+MyPoint GetFromPoint(MyPoint* arrayPoints, Link* arrayLinks, int indexLink);
+MyPoint GetToPoint(MyPoint* arrayPoints, Link* arrayLinks, int indexLink);
+MyPoint PointTransform(MyPoint point, DrawFormInfo Info);
+int DrawFigure(Figure& myFigure, MyPanel Panel, MyGraphics g);
+void DrawLine(double x1, double y1, double x2, double y2, MyGraphics g);
+void Draw(Links& links, Points& points, MyPanel Panel, MyGraphics g);
 
 #endif 

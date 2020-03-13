@@ -15,7 +15,7 @@ void RotateOX(MyPoint& point, double angle)
     double cosAngle = DegToRadCos(angle);
     double sinAngle = DegToRadSin(angle);
 
-    point.y = point.y + cosAngle + point.z * sinAngle;
+    point.y = point.y * cosAngle + point.z * sinAngle;
     point.z = -point.y * sinAngle + point.z * cosAngle;
 }
 
@@ -60,5 +60,10 @@ int RotatePoints(MyPoint* arrayPoints, int countPoints, RotateVal val)
 
 int RotateFigure(Figure& Myfigure, RotateVal val)
 {
-    return RotatePoints(Myfigure.points.arrayPoints, Myfigure.points.countPoints, val);
+    return RotateArrayPoints(Myfigure.points, val); // две точки 
+}
+
+int RotateArrayPoints(Points& points, RotateVal val)
+{
+    return RotatePoints(points.arrayPoints, points.countPoints, val);
 }

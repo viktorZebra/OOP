@@ -12,7 +12,7 @@ int ReadLink(Link& link, FILE* file)
     return codeError;
 }
 
-int ReadLinks(FILE* file, Link *arrayLinks, int countLinks)
+int ReadLinks(Link *arrayLinks, int countLinks, FILE* file)
 {
     int codeError = OK;
 
@@ -27,7 +27,7 @@ int ReadLinks(FILE* file, Link *arrayLinks, int countLinks)
     return codeError;
 }
 
-int ReadAllLinks(FILE* file, Links links)
+int ReadAllLinks(Links links, FILE* file)
 {
-    return ReadLinks(file, links.arrayLinks, links.countLinks);
+    return ReadLinks(links.arrayLinks, links.countLinks, file);
 }

@@ -26,5 +26,10 @@ int ScalePoints(MyPoint* arrayPoints, int countPoints, ScaleVal val)
 
 int ScaleFigure(Figure& myFigure, ScaleVal val)
 {
-    return ScalePoints(myFigure.points.arrayPoints, myFigure.points.countPoints, val);
+    return ScaleArrayPoints(myFigure.points, val);
+}
+
+int ScaleArrayPoints(Points& points, ScaleVal val)
+{
+    return ScalePoints(points.arrayPoints, points.countPoints, val);
 }

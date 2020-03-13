@@ -24,7 +24,7 @@ int TaskManager(Manager myManager, System::Windows::Forms::Panel^ Panel, System:
             break;
 
         case DRAW:
-            DrawFigure(myFigure, Panel, g);
+            codeError = DrawFigure(myFigure, Panel, g);
             break;
 
         case FREE:

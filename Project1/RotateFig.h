@@ -23,5 +23,6 @@ void RotateOZ(MyPoint& point, double angle);
 
 int RotatePoints(MyPoint* arrayPoints, int countPoints, RotateVal val);
 int RotateFigure(Figure& Myfigure, RotateVal val);
+int RotateArrayPoints(Points& points, RotateVal val);
 
 #endif

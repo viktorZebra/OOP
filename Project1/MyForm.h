@@ -82,6 +82,7 @@ namespace Project1
 		private: System::Windows::Forms::Label^ label7;
 		private: System::Windows::Forms::Label^ label8;
 		private: System::Windows::Forms::Label^ label9;
+	private: System::Windows::Forms::TextBox^ fileNameTextBox;
 
 
 
@@ -123,6 +124,7 @@ namespace Project1
 				this->label7 = (gcnew System::Windows::Forms::Label());
 				this->label8 = (gcnew System::Windows::Forms::Label());
 				this->label9 = (gcnew System::Windows::Forms::Label());
+				this->fileNameTextBox = (gcnew System::Windows::Forms::TextBox());
 				(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dXNumericUpDown))->BeginInit();
 				(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dYNumericUpDown))->BeginInit();
 				(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dZNumericUpDown))->BeginInit();
@@ -240,7 +242,7 @@ namespace Project1
 				// 
 				this->loadFileButton->Cursor = System::Windows::Forms::Cursors::Default;
 				this->loadFileButton->ForeColor = System::Drawing::SystemColors::ControlText;
-				this->loadFileButton->Location = System::Drawing::Point(13, 529);
+				this->loadFileButton->Location = System::Drawing::Point(13, 600);
 				this->loadFileButton->Name = L"loadFileButton";
 				this->loadFileButton->Size = System::Drawing::Size(194, 36);
 				this->loadFileButton->TabIndex = 14;
@@ -329,11 +331,19 @@ namespace Project1
 				this->label9->TabIndex = 18;
 				this->label9->Text = L"angleX";
 				// 
+				// fileNameTextBox
+				// 
+				this->fileNameTextBox->Location = System::Drawing::Point(13, 543);
+				this->fileNameTextBox->Name = L"fileNameTextBox";
+				this->fileNameTextBox->Size = System::Drawing::Size(194, 26);
+				this->fileNameTextBox->TabIndex = 21;
+				// 
 				// MyForm
 				// 
 				this->AutoScaleDimensions = System::Drawing::SizeF(9, 20);
 				this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 				this->ClientSize = System::Drawing::Size(1296, 797);
+				this->Controls->Add(this->fileNameTextBox);
 				this->Controls->Add(this->label7);
 				this->Controls->Add(this->label4);
 				this->Controls->Add(this->label8);
@@ -430,7 +440,8 @@ namespace Project1
 		{
 			Manager myManager;
 			myManager.currentTask = LOAD_FILE;
-			myManager.fileName = FILE_NAME;
+			String^ strFileName = fileNameTextBox->Text;
+			myManager.fileName = StringToChar(strFileName);
 
 			int codeError = CallManager(myManager, Panel, g);
 
@@ -438,6 +449,8 @@ namespace Project1
 			{
 				ErrorsShowMessage(codeError);
 			}
+
+			free(myManager.fileName);
 		}
 
 		private: System::Void MyForm_FormClosing(System::Object^ sender, System::Windows::Forms::FormClosingEventArgs^ e)
@@ -483,6 +496,20 @@ namespace Project1
 		{
 			return (MessageBox::Show("Вы уверены, что хотите выйти?", "Выход",
 				MessageBoxButtons::YesNo, MessageBoxIcon::Question) == System::Windows::Forms::DialogResult::Yes);
+		}
+
+		private: char* StringToChar(String^ str)
+		{
+			char* charStr = (char*)malloc(sizeof(char) * str->Length  + 1);
+
+			for (int i = 0; i < str->Length; i++)
+			{
+				charStr[i] = str[i];
+			}
+
+			charStr[str->Length] = '\0';
+
+			return charStr;
 		}
 };
 };

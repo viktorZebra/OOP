@@ -1,43 +1,43 @@
 #include "DrawFig.h"
 
-void DrawFigure(Figure& myFigure, System::Windows::Forms::Panel^ Panel, Graphics^ g)
+int DrawFigure(Figure& myFigure, MyPanel Panel, MyGraphics g)
 {
     ClearScreen(g);
-    MyPoint firstPoint, secondPoint;
+    Draw(myFigure.links, myFigure.points, Panel, g);
 
-    for (int i = 0; i < myFigure.links.countLinks; i++)
-    {
-        firstPoint = GetPoint(myFigure.points.arrayPoints, myFigure.links.arrayLinks[i].from - 1); // не знаю как избежать двух точек
-        secondPoint = GetPoint(myFigure.points.arrayPoints, myFigure.links.arrayLinks[i].to - 1);
-
-        firstPoint = PointTransform(firstPoint, Panel);
-        secondPoint = PointTransform(secondPoint, Panel);
-
-        DrawLine(firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y, g);
-    }
+    return OK;
 }
 
-MyPoint GetPoint(MyPoint* arrayPoints, int number)
+MyPoint GetFromPoint(MyPoint* arrayPoints, Link* arrayLinks, int indexLink)
 {
-    MyPoint dot = { arrayPoints[number].x, arrayPoints[number].y, arrayPoints[number].z };
+    int indexPoint = arrayLinks[indexLink].from - 1;
+    MyPoint dot = { arrayPoints[indexPoint].x, arrayPoints[indexPoint].y, arrayPoints[indexPoint].z };
 
     return dot;
 }
 
-MyPoint PointTransform(MyPoint point, System::Windows::Forms::Panel^ Panel)
+MyPoint GetToPoint(MyPoint* arrayPoints, Link* arrayLinks, int indexLink)
+{
+    int indexPoint = arrayLinks[indexLink].to - 1;
+    MyPoint dot = { arrayPoints[indexPoint].x, arrayPoints[indexPoint].y, arrayPoints[indexPoint].z };
+
+    return dot;
+}
+
+MyPoint PointTransform(MyPoint point, DrawFormInfo Info)
 {
     point.z = sqrt(2) / 2 * point.z;
 
     point.x = point.x - point.z;
-    point.x = point.x + Panel->Width / 2;
+    point.x = point.x + Info.width / 2;
 
     point.y = point.z - point.y;
-    point.y = point.y + Panel->Height / 2;
+    point.y = point.y + Info.height / 2;
 
     return point;
 }
 
-void DrawLine(double x1, double y1, double x2, double y2, Graphics^ g)
+void DrawLine(double x1, double y1, double x2, double y2, MyGraphics g) // обертка 
 {
     Pen^ pen = CreatePen();
 
@@ -45,4 +45,24 @@ void DrawLine(double x1, double y1, double x2, double y2, Graphics^ g)
     PointF pt2(x2, y2);
 
     MyDrawLine(g, pen, pt1, pt2);
+}
+
+void Draw(Links& links, Points& points, MyPanel Panel, MyGraphics g)
+{
+    MyPoint firstPoint, secondPoint;
+
+    DrawFormInfo Info;
+    Info.width = Panel->Width;
+    Info.height = Panel->Height;
+
+    for (int i = 0; i < links.countLinks; i++)
+    {
+        firstPoint = GetFromPoint(points.arrayPoints, links.arrayLinks, i);
+        secondPoint = GetToPoint(points.arrayPoints, links.arrayLinks, i);
+
+        firstPoint = PointTransform(firstPoint, Info);
+        secondPoint = PointTransform(secondPoint, Info);
+
+        DrawLine(firstPoint.x, firstPoint.y, secondPoint.x, secondPoint.y, g);
+    }
 }

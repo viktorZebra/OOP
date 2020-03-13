@@ -21,27 +21,23 @@ int LoadModelFromFile(Figure& myFigure, char* fileName)
 	
 	if (!codeError)
 	{
-		codeError = ReadAllPoints(file, bufFigure.points);
+		codeError = ReadAllPoints(bufFigure.points, file);
 	}
 
 	if (!codeError)
 	{
-		codeError = ReadAllLinks(file, bufFigure.links);
+		codeError = ReadAllLinks(bufFigure.links, file);
 	}
 
-	if (codeError || codeError == ALLOC_MEMORY_ERROR)
+	if (codeError)
 	{
-		codeError = INPUT_ERROR;
+		FreeMemory(bufFigure);
 	}
 	else
 	{
 		FreePrevFigure(myFigure);
-		CopyCountPointsAndLinks(myFigure, bufFigure);
-		AllocMemmoryFig(myFigure.points, myFigure.links);
-		CopyFig(myFigure, bufFigure);
+		InterceptionData(myFigure, bufFigure);
 	}
-
-	FreeMemory(bufFigure);
 
 	fclose(file);
 
@@ -84,27 +80,22 @@ Figure& InitFig(Figure& myFigure)
 	return myFigure;
 }
 
-void CopyFig(Figure& myFigure, Figure& bufFigure)
+void InterceptionData(Figure& myFigure, Figure& bufFigure)
 {
-	for (int i = 0; i < bufFigure.links.countLinks; i++)
-	{
-		myFigure.links.arrayLinks[i].from = bufFigure.links.arrayLinks[i].from;
-		myFigure.links.arrayLinks[i].to = bufFigure.links.arrayLinks[i].to;
-	}
-
-	for (int i = 0; i < bufFigure.points.countPoints; i++)
-	{
-		myFigure.points.arrayPoints[i].x = bufFigure.points.arrayPoints[i].x;
-		myFigure.points.arrayPoints[i].y = bufFigure.points.arrayPoints[i].y;
-		myFigure.points.arrayPoints[i].z = bufFigure.points.arrayPoints[i].z;
-
-		myFigure.points.arrayPoints[i].number = bufFigure.points.arrayPoints[i].number;
-	}
+	InterceptionPoints(myFigure.points, bufFigure.points);
+	InterceptionLinks(myFigure.links, bufFigure.links);
 }
 
-void CopyCountPointsAndLinks(Figure& myFigure, Figure& bufFigure)
+void InterceptionPoints(Points& points, Points &bufPoints)
 {
-	myFigure.links.countLinks = bufFigure.links.countLinks;
-	myFigure.points.countPoints = bufFigure.points.countPoints;
+	points.countPoints = bufPoints.countPoints;
+	points.arrayPoints = bufPoints.arrayPoints;
+	bufPoints.arrayPoints = NULL;
 }
 
+void InterceptionLinks(Links& links, Links& bufLinks)
+{
+	links.countLinks = bufLinks.countLinks;
+	links.arrayLinks = bufLinks.arrayLinks;
+	bufLinks.arrayLinks = NULL;
+}

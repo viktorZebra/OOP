@@ -11,7 +11,8 @@
 int ReadCount(Points& points, Links& links, FILE* file);
 int LoadModelFromFile(Figure& myFigure, char* fileName);
 Figure& InitFig(Figure& myFigure);
-void CopyFig(Figure& myFigure, Figure& bufFigure);
-void CopyCountPointsAndLinks(Figure& myFigure, Figure& bufFigure);
+void InterceptionData(Figure& myFigure, Figure& bufFigure);
+void InterceptionPoints(Points& points, Points& bufPoints);
+void InterceptionLinks(Links& links, Links& bufLinks);
 
 #endif

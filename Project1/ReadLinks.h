@@ -17,8 +17,8 @@ typedef struct
 	int countLinks;
 }Links;
 
-int ReadLinks(FILE* file, Link *arrayLinks, int countLinks);
+int ReadLinks(Link *arrayLinks, int countLinks, FILE* file);
 int ReadLink(Link &link, FILE* file);
-int ReadAllLinks(FILE* file, Links links);
+int ReadAllLinks(Links links, FILE* file);
 
 #endif 

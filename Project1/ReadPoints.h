@@ -21,7 +21,7 @@ typedef struct
 
 
 int ReadPoint(MyPoint& point, FILE* file);
-int ReadPoints(FILE* file, MyPoint* arrayPoints, int countPoints);
-int ReadAllPoints(FILE* file, Points points);
+int ReadPoints(MyPoint* arrayPoints, int countPoints, FILE* file);
+int ReadAllPoints(Points points, FILE* file);
 
 

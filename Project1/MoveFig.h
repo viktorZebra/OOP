@@ -14,5 +14,7 @@ typedef struct
 void MovePoint(MyPoint& point, MoveVal val);
 int MovePoints(MyPoint* arrayPoints, int countPoints, MoveVal val);
 int MoveFigure(Figure& myFigure, MoveVal val);
+int MoveArrayPoints(Points& points, MoveVal val);
+
 
 #endif 
