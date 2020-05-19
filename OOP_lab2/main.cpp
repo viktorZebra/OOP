@@ -4,7 +4,7 @@
 #include <exception>
 
 #include "Errors.h"
-#include "MyVector.cpp"
+#include "MyVector.hpp" // исправлено
 
 int main()
 {
@@ -12,9 +12,10 @@ int main()
     {
         std::cout << "Test constructors\n\n";
 
-       MyVector<int>* v1 = new MyVector<int>();
+        MyVector<int>* v1 = new MyVector<int>();
+
         std::cout << "Default:\n";
-        std::cout << v1 << "\n";
+        std::cout << *v1 << "\n";
 
         std::cout << "With parameters: \n";
         MyVector<double> v2(2, 3., 4.);
@@ -68,7 +69,7 @@ int main()
         std::cout << "Are two MyVectors equal? {3, 4, 0} and {3, 4, 0}: " << (v3 == v6) << "\n";
         std::cout << "Are two MyVectors not equal? {3, 4, 0} and {3, 4, 0}: " << (v3 != v6) << "\n";
     }
-    catch (ExceptionVector & err)
+    catch (ExceptionVector& err)
     {
         std::cout << err.what() << std::endl;
     }

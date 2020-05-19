@@ -3,9 +3,10 @@
 #include <memory>
 #include <iterator>
 #include <initializer_list>
+#include <ctime>
+#include "Errors.h"
 
 #include "MyBaseIterator.h"
-//#include "MyVector.h"
 
 using namespace std;
 
@@ -13,7 +14,7 @@ template<class Type>
 class MyVector;
 
 template<typename Type>
-class MyIterator : public MyBaseIterator
+class MyIterator : public MyBaseIterator , public std::iterator <std::input_iterator_tag, Type>
 {
 public:
     MyIterator(const MyIterator<Type>& other);
@@ -35,7 +36,8 @@ public:
     bool operator!=(const MyIterator<Type>& other) const;
 
 private:
-    weak_ptr<Type> dataPtr;
+    weak_ptr<Type[]> dataPtr;
+    bool IsNullPointer(int string) const;
 };
 
 

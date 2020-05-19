@@ -5,6 +5,25 @@
 #define max(a,b) (((a) > (b)) ? (a) : (b))
 
 template<typename Type>
+ostream& operator <<(ostream& os, const MyVector<Type>& vec)
+{
+    MyIterator<Type> iter(vec);
+
+    if (!iter)
+    {
+        os << "MyVector is empty.";
+        return os;
+    }
+
+    os << '(' << *iter;
+    for (iter++; iter; iter++)
+        os << ", " << *iter;
+    os << ')';
+
+    return os;
+}
+
+template<typename Type>
 MyVector<Type>::~MyVector<Type>()
 {
     if (data)
@@ -22,13 +41,19 @@ template<typename Type>
 MyVector<Type>::MyVector(int countElements)
 {
     if (countElements < 0)
-        throw EmptyError("Error: ");
+    {
+        time_t t_time = time(NULL);
+        throw EmptyError(__FILE__, __LINE__, ctime(&t_time));
+    }
 
     countElem = countElements;
     allocMemory(countElem);
 
     if (!data)
-        throw MemError("Error: ");
+    {
+        time_t t_time = time(NULL);
+        throw MemError(__FILE__, __LINE__, ctime(&t_time));
+    }
 
     MyIterator<Type> iter(*this);
     for (; iter; iter++)
@@ -39,13 +64,19 @@ template<typename Type>
 MyVector<Type>::MyVector(int countElements, Type value, ...)
 {
     if (countElements < 1)
-        throw EmptyError("Error: ");
+    {
+        time_t t_time = time(NULL);
+        throw EmptyError(__FILE__, __LINE__, ctime(&t_time));
+    }
 
     countElem = countElements;
     allocMemory(countElem);
 
     if (!data)
-        throw MemError("Error: ");
+    {
+        time_t t_time = time(NULL);
+        throw MemError(__FILE__, __LINE__, ctime(&t_time));
+    }
 
     MyIterator<Type> iter(*this);
     va_list valuePtr;
@@ -62,7 +93,10 @@ template<typename Type>
 MyVector<Type>::MyVector(int countElements, Type* valueArr)
 {
     if (countElements <= 0)
-        throw EmptyError("Error: ");
+    {
+        time_t t_time = time(NULL);
+        throw EmptyError(__FILE__, __LINE__, ctime(&t_time));
+    }
 
     countElem = countElements;
     allocMemory(countElem);
@@ -103,7 +137,10 @@ template<typename Type>
 Type& MyVector<Type>::getElemMyVector(int index)
 {
     if (index < 0 || index >= countElem)
-        throw IndexError("Error: ", index);
+    {
+        time_t t_time = time(NULL);
+        throw IndexError(__FILE__, __LINE__, ctime(&t_time));
+    }
 
     MyIterator<Type> iter(*this);
     for (int i = 0; i < index; i++, iter++);
@@ -115,7 +152,10 @@ template<typename Type>
 const Type& MyVector<Type>::getElemMyVector(int index) const
 {
     if (index < 0 || index >= countElem)
-        throw IndexError("Error: ", index);
+    {
+        time_t t_time = time(NULL);
+        throw IndexError(__FILE__, __LINE__, ctime(&t_time));
+    }
 
     MyIterator<Type> iter(*this);
     for (int i = 0; i <= index; i++, iter++);
@@ -155,7 +195,10 @@ template<typename Type>
 Type MyVector<Type>::len(void) const
 {
     if (countElem < 0)
-        throw EmptyError("Error: ");
+    {
+        time_t t_time = time(NULL);
+        throw EmptyError(__FILE__, __LINE__, ctime(&t_time));
+    }
 
     MyIterator<Type> iter(*this);
     double sum = 0;
@@ -169,59 +212,112 @@ template <typename Type>
 Type MyVector<Type>::operator *(const MyVector<Type>& vec) const
 {
     if (countElem < 0 || vec.countElem < 0)
-        throw EmptyError("Error: ");
+    {
+        time_t t_time = time(NULL);
+        throw EmptyError(__FILE__, __LINE__, ctime(&t_time));
+    }
 
     int max_len = max(countElem, vec.countElem);
-    MyVector<Type> new_MyVector(max_len);
-    multMyVectors(new_MyVector, *this, vec);
+    MyVector<Type> result(this->multMyVectors(vec));
 
-    return new_MyVector.sumAllElem();
+    return result.sumAllElem();
+}
+
+template <typename Type>
+Type MyVector<Type>::operator *=(const MyVector<Type>& vec) const
+{
+    if (countElem < 0 || vec.countElem < 0)
+    {
+        time_t t_time = time(NULL);
+        throw EmptyError(__FILE__, __LINE__, ctime(&t_time));
+    }
+
+    int max_len = max(countElem, vec.countElem);
+    MyVector<Type> result(max_len);
+
+    result = this->multMyVectors(vec);
+
+    return result.sumAllElem();
+}
+
+template <typename Type>
+MyVector<Type>& MyVector<Type>::multiplyScalToVector(const MyVector<Type>& vec)
+{
+    if (countElem < 0 || vec.countElem < 0)
+    {
+        time_t t_time = time(NULL);
+        throw EmptyError(__FILE__, __LINE__, ctime(&t_time));
+    }
+
+    int max_len = max(countElem, vec.countElem);
+    MyVector<Type> result(max_len);
+
+    result = this->multMyVectors(vec);
+
+    return result.sumAllElem();
 }
 
 template <typename Type>
 MyVector<Type> MyVector<Type>::operator +(const MyVector<Type>& vec) const
 {
     if (countElem < 0 || vec.countElem < 0)
-        throw EmptyError("Error");
+    {
+        time_t t_time = time(NULL);
+        throw EmptyError(__FILE__, __LINE__, ctime(&t_time));
+    }
 
-    int max_len = max(countElem, vec.countElem);
-    MyVector<Type> new_MyVector(max_len);
-    sumMyVectors(new_MyVector, *this, vec);
-
-    return new_MyVector;
+    return this->sumMyVectors(vec);
 }
 
 template <typename Type>
 MyVector<Type>& MyVector<Type>::operator +=(const MyVector<Type>& vec)
 {
     if (countElem < 0 || vec.countElem < 0)
-        throw EmptyError("Error");
+    {
+        time_t t_time = time(NULL);
+        throw EmptyError(__FILE__, __LINE__, ctime(&t_time));
+    }
 
-    sumMyVectors(*this, *this, vec);
-
-    return *this;
+    return this->sumMyVectors(vec);
 }
 
 template <typename Type>
 MyVector<Type> MyVector<Type>::operator -(const MyVector<Type>& vec) const
 {
     if (countElem < 0 || vec.countElem < 0)
-        throw EmptyError("Error");
+    {
+        time_t t_time = time(NULL);
+        throw EmptyError(__FILE__, __LINE__, ctime(&t_time));
+    }
 
-    int max_len = max(countElem, vec.countElem);
-    MyVector<Type> new_MyVector(max_len);
-    differenceMyVectors(new_MyVector, *this, vec);
-
-    return new_MyVector;
+    return this->differenceMyVectors(vec);
 }
 
 template <typename Type>
-MyVector<Type>& MyVector<Type>::operator -=(const MyVector<Type>& vec)
+MyVector<Type> MyVector<Type>::operator -=(const MyVector<Type>& vec)
 {
     if (countElem < 0 || vec.countElem < 0)
-        throw EmptyError("Error");
+    {
+        time_t t_time = time(NULL);
+        throw EmptyError(__FILE__, __LINE__, ctime(&t_time));
+    }
 
-    differenceMyVectors(*this, *this, vec);
+
+    return this->differenceMyVectors(vec);
+}
+
+template<typename Type>
+MyVector<Type>& MyVector<Type>::operator *(const Type& mult)
+{
+    if (countElem < 0)
+    {
+        time_t t_time = time(NULL);
+        throw EmptyError(__FILE__, __LINE__, ctime(&t_time));
+    }
+
+    MyIterator<Type> iter(*this);
+    for (; iter; iter++)
+        *iter *= mult;
 
     return *this;
 }
@@ -230,7 +326,10 @@ template<typename Type>
 MyVector<Type>& MyVector<Type>::operator *=(const Type& mult)
 {
     if (countElem < 0)
-        throw EmptyError("Error");
+    {
+        time_t t_time = time(NULL);
+        throw EmptyError(__FILE__, __LINE__, ctime(&t_time));
+    }
 
     MyIterator<Type> iter(*this);
     for (; iter; iter++)
@@ -243,7 +342,10 @@ template<typename Type>
 MyVector<Type>& MyVector<Type>::operator /=(const Type& div)
 {
     if (!div)
-        throw ZeroDivError("Error: ");
+    {
+        time_t t_time = time(NULL);
+        throw ZeroDivError(__FILE__, __LINE__, ctime(&t_time));
+    }
 
     Type div_new = 1 / div;
     *this *= div_new;
@@ -252,10 +354,45 @@ MyVector<Type>& MyVector<Type>::operator /=(const Type& div)
 }
 
 template<typename Type>
+MyVector<Type>& MyVector<Type>::operator /(const Type& div)
+{
+    if (!div)
+    {
+        time_t t_time = time(NULL);
+        throw ZeroDivError(__FILE__, __LINE__, ctime(&t_time));
+    }
+
+    Type div_new = 1 / div;
+    *this *= div_new;
+
+    return *this;
+}
+
+template<typename Type>
+MyVector<Type>& MyVector<Type>::divToNumber(const Type& div)
+{
+    if (!div)
+    {
+        time_t t_time = time(NULL);
+        throw ZeroDivError(__FILE__, __LINE__, ctime(&t_time));
+    }
+
+    Type div_new = 1 / div;
+    *this *= div_new;
+
+    return *this;
+}
+
+
+
+template<typename Type>
 Type MyVector<Type>::sumAllElem()
 {
     if (countElem < 0)
-        throw EmptyError("Error");
+    {
+        time_t t_time = time(NULL);
+        throw EmptyError(__FILE__, __LINE__, ctime(&t_time));
+    }
 
     MyIterator<Type> iter(*this);
     Type sum = 0;
@@ -266,12 +403,15 @@ Type MyVector<Type>::sumAllElem()
 }
 
 template<typename Type>
-double MyVector<Type>::angleBetweenMyVectors(const MyVector<Type>& vec) const
+Type MyVector<Type>::angleBetweenMyVectors(const MyVector<Type>& vec) const
 {
     if (!this->len() || !vec.len())
-        throw ZeroDivError("Error: ");
+    {
+        time_t t_time = time(NULL);
+        throw ZeroDivError(__FILE__, __LINE__, ctime(&t_time));
+    }
 
-    double angle = (*this * vec) / (this->len() * vec.len());
+    Type angle = (*this * vec) / (this->len() * vec.len());
     return acos(angle) * 180 / M_PI;
 }
 
@@ -299,9 +439,9 @@ MyVector<Type>& MyVector<Type>::operator &=(const MyVector<Type>& vec)
     if (countElem != 3)
         return *(new MyVector<Type>);
 
-    double x = data.get()[1] * vec.data.get()[2] - data.get()[2] * vec.data.get()[1];
-    double y = data.get()[2] * vec.data.get()[0] - data.get()[0] * vec.data.get()[2];
-    double z = data.get()[0] * vec.data.get()[1] - data.get()[1] * vec.data.get()[0];
+    double x = data[1] * vec.data[2] - data[2] * vec.data[1];
+    double y = data[2] * vec.data[0] - data[0] * vec.data[2];
+    double z = data[0] * vec.data[1] - data[1] * vec.data[0];
 
     *this = MyVector<Type>(3, x, y, z);
     return *this;
@@ -313,9 +453,23 @@ MyVector<Type> MyVector<Type>::operator &(const MyVector<Type>& vec) const
     if (countElem != 3)
         return MyVector<Type>();
 
-    double x = data.get()[1] * vec.data.get()[2] - data.get()[2] * vec.data.get()[1];
-    double y = data.get()[2] * vec.data.get()[0] - data.get()[0] * vec.data.get()[2];
-    double z = data.get()[0] * vec.data.get()[1] - data.get()[1] * vec.data.get()[0];
+    double x = data[1] * vec.data[2] - data[2] * vec.data[1];
+    double y = data[2] * vec.data[0] - data[0] * vec.data[2];
+    double z = data[0] * vec.data[1] - data[1] * vec.data[0];
+
+    MyVector<Type> new_MyVector(3, x, y, z);
+    return new_MyVector;
+}
+
+template<typename Type>
+MyVector<Type>& MyVector<Type>::multiplyVecToVector(const MyVector<Type>& vec)
+{
+    if (countElem != 3)
+        return MyVector<Type>();
+
+    double x = data[1] * vec.data[2] - data[2] * vec.data[1];
+    double y = data[2] * vec.data[0] - data[0] * vec.data[2];
+    double z = data[0] * vec.data[1] - data[1] * vec.data[0];
 
     MyVector<Type> new_MyVector(3, x, y, z);
     return new_MyVector;
@@ -410,7 +564,7 @@ MyVector<Type> MyVector<Type>::getSingleMyVector() const
 }
 
 template<typename Type>
-int MyVector<Type>::size() const
+size_t MyVector<Type>::size() const
 {
     return countElem;
 }
@@ -434,57 +588,77 @@ bool MyVector<Type>::isOrthogonality(const MyVector<Type>& vec) const
 }
 
 template <typename Type>
-void MyVector<Type>::sumMyVectors(MyVector<Type>& result, const MyVector<Type>& vec1, const MyVector<Type>& vec2) const
+MyVector<Type> MyVector<Type>::sumMyVectors(const MyVector<Type>& vec2) const
 {
-    MyIterator<Type> iter_result(result);
-    MyIterator<Type> iter_vec1(vec1);
+    MyIterator<Type> iter_vec1(*this);
     MyIterator<Type> iter_vec2(vec2);
+
+    int max_len = max(countElem, vec2.countElem);
+    MyVector<Type> result(max_len);
+
+    MyIterator<Type> iter_result(result);
 
     for (int i = 0; iter_result; i++, iter_result++, iter_vec1++, iter_vec2++)
     {
-        if (i >= vec1.countElem)
+        if (i >= countElem)
             *iter_result = *iter_vec2;
         else if (i >= vec2.countElem)
             *iter_result = *iter_vec1;
         else
             *iter_result = *iter_vec1 + *iter_vec2;
     }
+
+    return result;
 }
 
 template <typename Type>
-void MyVector<Type>::differenceMyVectors(MyVector<Type>& result, const MyVector<Type>& vec1, const MyVector<Type>& vec2) const
+MyVector<Type> MyVector<Type>::differenceMyVectors(const MyVector<Type>& vec2) const
 {
-    MyIterator<Type> iter_result(result);
-    MyIterator<Type> iter_vec1(vec1);
+    MyIterator<Type> iter_vec1(*this);
     MyIterator<Type> iter_vec2(vec2);
+
+    int max_len = max(countElem, vec2.countElem);
+    MyVector<Type> result(max_len);
+
+    MyIterator<Type> iter_result(result);
+
     for (int i = 0; iter_result; i++, iter_result++, iter_vec1++, iter_vec2++)
     {
-        if (i >= vec1.countElem)
+        if (i >= countElem)
             *iter_result = -*iter_vec2;
         else if (i >= vec2.countElem)
             *iter_result = *iter_vec1;
         else
             *iter_result = *iter_vec1 - *iter_vec2;
     }
+
+    return result;
 }
 
 template <typename Type>
-void MyVector<Type>::multMyVectors(MyVector<Type>& result, const MyVector<Type>& vec1, const MyVector<Type>& vec2) const
+MyVector<Type> MyVector<Type>::multMyVectors(const MyVector<Type>& vec2) const
 {
-    MyIterator<Type> iter_result(result);
-    MyIterator<Type> iter_vec1(vec1);
+    MyIterator<Type> iter_vec1(*this);
     MyIterator<Type> iter_vec2(vec2);
+
+    int max_len = max(countElem, vec2.countElem);
+    MyVector<Type> result(max_len);
+
+    MyIterator<Type> iter_result(result);
+
     for (int i = 0; iter_result; i++, iter_result++, iter_vec1++, iter_vec2++)
     {
-        if (i >= vec1.countElem || i >= vec2.countElem)
+        if (i >= countElem || i >= vec2.countElem)
             *iter_result = 0;
         else
             *iter_result = *iter_vec1 * *iter_vec2;
     }
+
+    return result;
 }
 
 template <typename Type>
-MyVector<Type> MyVector<Type>::operator -()
+MyVector<Type> MyVector<Type>::operator -() const
 {
     MyVector<Type> new_MyVector(*this);
     MyIterator<Type> iter(new_MyVector);
@@ -494,10 +668,34 @@ MyVector<Type> MyVector<Type>::operator -()
     return new_MyVector;
 }
 
+template<typename Type>
+MyVector<Type>& MyVector<Type>::multiplyToNumber(const Type& value)
+{
+    MyIterator<Type> iter(*this);
+
+    for (; iter; iter++)
+        *iter *= value;
+
+    return *this;
+}
+
+template <typename Type>
+MyIterator<Type> MyVector<Type>::begin()
+{
+    MyIterator<Type> it(*this);
+    return it;
+}
+
+template <typename Type>
+MyIterator<Type> MyVector<Type>::end()
+{
+    return MyIterator<Type>(*this, size());
+}
+
 template <typename Type>
 void MyVector<Type>::allocMemory(int countElem)
 {
     data.reset();
-    shared_ptr<Type> sp_temp(new Type[countElem], default_delete<Type[]>());
+    shared_ptr<Type[]> sp_temp(new Type[countElem], default_delete<Type[]>());
     data = sp_temp;
 }

@@ -5,7 +5,7 @@ class MyBaseIterator
 public:
 	MyBaseIterator();
 	MyBaseIterator(const MyBaseIterator& other);
-	~MyBaseIterator();
+	virtual ~MyBaseIterator() = 0;
 protected:
 	int index;
 	int countElem;

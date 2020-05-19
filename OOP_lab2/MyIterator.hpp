@@ -19,23 +19,29 @@ MyIterator<Type>::MyIterator(const MyVector<Type>& other)
 template<typename Type>
 Type& MyIterator<Type>::operator*()
 {
-	shared_ptr<Type> bufPtr = dataPtr.lock();
+	IsNullPointer(__LINE__);
 
-	return *(bufPtr.get() + index);
-}
-
-template<typename Type>
-const Type& MyIterator<Type>::operator*() const
-{
-	shared_ptr<Type> bufPtr(dataPtr);
+	shared_ptr<Type[]> bufPtr = dataPtr.lock();
 
 	return bufPtr[index];
 }
 
 template<typename Type>
-Type* MyIterator<Type>::operator->()
+const Type& MyIterator<Type>::operator*() const
 {
-	shared_ptr<Type> bufPtr(dataPtr);
+	IsNullPointer(__LINE__);
+
+	shared_ptr<Type[]> bufPtr = dataPtr.lock();
+
+	return bufPtr[index];
+}
+
+template<typename Type>
+Type* MyIterator<Type>::operator->() // исключение (исправил)
+{
+	IsNullPointer(__LINE__);
+
+	shared_ptr<Type[]> bufPtr = dataPtr.lock();
 
 	return bufPtr.get() + index;
 }
@@ -43,7 +49,9 @@ Type* MyIterator<Type>::operator->()
 template<typename Type>
 const Type* MyIterator<Type>::operator->() const
 {
-	shared_ptr<Type> bufPtr(dataPtr);
+	IsNullPointer(__LINE__);
+
+	shared_ptr<Type[]> bufPtr = dataPtr.lock();
 
 	return bufPtr.get() + index;
 }
@@ -51,6 +59,8 @@ const Type* MyIterator<Type>::operator->() const
 template<typename Type>
 MyIterator<Type>::operator bool() const
 {
+	IsNullPointer(__LINE__);
+
 	if (index < 0 || index >= countElem || countElem == 0)
 		return false;
 	else
@@ -60,6 +70,8 @@ MyIterator<Type>::operator bool() const
 template<typename Type>
 MyIterator<Type>& MyIterator<Type>::operator=(const MyIterator<Type>& other)
 {
+	IsNullPointer(__LINE__);
+
 	//проверка на самоприсваивание
 	if (this == &other) 
 	{
@@ -76,6 +88,8 @@ MyIterator<Type>& MyIterator<Type>::operator=(const MyIterator<Type>& other)
 template<typename Type>
 MyIterator<Type>& MyIterator<Type>::operator=(Type value)
 {
+	IsNullPointer(__LINE__);
+
 	dataPtr[index] = value;
 
 	return *this;
@@ -84,6 +98,8 @@ MyIterator<Type>& MyIterator<Type>::operator=(Type value)
 template<typename Type>
 MyIterator<Type>& MyIterator<Type>::operator++()
 {
+	IsNullPointer(__LINE__);
+
 	++index;
 
 	return *this;
@@ -92,6 +108,8 @@ MyIterator<Type>& MyIterator<Type>::operator++()
 template<typename Type>
 MyIterator<Type> MyIterator<Type>::operator++(int)
 {
+	IsNullPointer(__LINE__);
+
 	++(*this);
 
 	return *this;
@@ -100,12 +118,26 @@ MyIterator<Type> MyIterator<Type>::operator++(int)
 template<class Type>
 bool MyIterator<Type>::operator==(const MyIterator<Type>& other) const
 {
+	IsNullPointer(__LINE__);
+
 	return dataPtr == other.dataPtr;
 }
 
 template<class Type>
 bool MyIterator<Type>::operator!=(const MyIterator<Type>& other) const
 {
+	IsNullPointer(__LINE__);
+
 	return dataPtr != other.dataPtr;
 } 
 
+template <typename Type>
+bool MyIterator<Type>::IsNullPointer(int string) const
+{
+	if (!dataPtr.expired())
+		return true;
+
+	time_t t_time = time(NULL);
+	throw DeletedObj(__FILE__, string, ctime(&t_time));
+	return false;
+}

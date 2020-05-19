@@ -1,14 +1,16 @@
 #pragma once
+#pragma warning(disable : 4996)
 
 #include <stdarg.h>
 #include <cmath>
 #include <iostream>
 #include <cstdlib>
 #include <memory>
+#include <time.h>
 #include <stdexcept>
 
 #include "MyBaseVector.h"
-#include "MyIterator.cpp"
+#include "MyIterator.hpp"
 #include "Errors.h"
 
 #define EPS 1e-5
@@ -36,7 +38,7 @@ public:
 
     bool isZero() const;
     bool isSingle() const;
-    int size() const;
+    size_t size() const; // size_t (исправлено)
     Type len() const;
 
     Type& operator[](int index);
@@ -47,52 +49,48 @@ public:
     bool setElemMyVector(int index, const Type& vec);
     MyVector<Type> getSingleMyVector() const;
 
+    MyVector<Type>& operator *(const Type& mult);
     MyVector<Type>& operator *=(const Type& mult);
+    MyVector<Type>& multiplyToNumber(const Type& value); // добавил умножение на число
+
     MyVector<Type>& operator /=(const Type& div);
-    MyVector<Type> operator -();
+    MyVector<Type>& operator /(const Type& div);
+    MyVector<Type>& divToNumber(const Type& div); // добавил деление вектора на число (умножение на обратное)
+
+    MyVector<Type> operator -() const; // (исправлено)
 
     Type operator *(const MyVector<Type>& vec) const;
-    MyVector<Type>& operator &=(const MyVector<Type>& vec);
-    MyVector<Type> operator &(const MyVector<Type>& vec) const;
-    MyVector<Type> operator +(const MyVector<Type>&) const;
-    MyVector<Type>& operator +=(const MyVector<Type>&);
-    MyVector<Type> operator -(const MyVector<Type>&) const;
-    MyVector<Type>& operator -=(const MyVector<Type>&);
+    Type operator *=(const MyVector<Type>& vec) const;
+    MyVector<Type>& multiplyScalToVector(const MyVector<Type>& vec); // добавил умножение скалярное 
 
-    double angleBetweenMyVectors(const MyVector<Type>&) const;
+    MyVector<Type>& operator &=(const MyVector<Type>& vec);
+    MyVector<Type> operator &(const MyVector<Type>& vec) const; 
+    MyVector<Type>& multiplyVecToVector(const MyVector<Type>& vec); // добавил векторное умножение 
+
+    MyVector<Type> operator +(const MyVector<Type>&) const; 
+    MyVector<Type>& operator +=(const MyVector<Type>&); 
+    MyVector<Type> sumMyVectors(const MyVector<Type>& vec2) const; // добавил сумму двух векторов
+
+    MyVector<Type> operator -(const MyVector<Type>&) const;
+    MyVector<Type> operator -=(const MyVector<Type>&);
+    MyVector<Type> differenceMyVectors(const MyVector<Type>& vec2) const; // добавил разницу двух векторов 
+
+    Type angleBetweenMyVectors(const MyVector<Type>&) const; // тип шаблона возвращаемый (исправлено)
     bool isCollinearity(const MyVector<Type>&) const;
     bool isOrthogonality(const MyVector<Type>&) const;
 
-    bool operator ==(const MyVector<Type>&) const;
+    bool operator ==(const MyVector<Type>& vec) const;
     bool operator !=(const MyVector<Type>&) const;
 
+    MyIterator<Type> begin();
+    MyIterator<Type> end();
+
 protected:
-    Type sumAllElem();
-    void sumMyVectors(MyVector<Type>& result, const MyVector<Type>& vec1, const MyVector<Type>& vec2) const;
-    void differenceMyVectors(MyVector<Type>& result, const MyVector<Type>& vec1, const MyVector<Type>& vec2) const;
-    void multMyVectors(MyVector<Type>& result, const MyVector<Type>& vec1, const MyVector<Type>& vec2) const;
     void allocMemory(int);
+    MyVector<Type> multMyVectors(const MyVector<Type>& vec2) const;
+    Type sumAllElem();
 
 private:
-    shared_ptr<Type> data;
+    shared_ptr<Type[]> data; // обращение [] (исправлено)
     int countElem;
 };
-
-template<typename Type>
-ostream& operator <<(ostream& os, const MyVector<Type>& vec)
-{
-    MyIterator<Type> iter(vec);
-
-    if (!iter)
-    {
-        os << "MyVector is empty.";
-        return os;
-    }
-
-    os << '(' << *iter;
-    for (iter++; iter; iter++)
-        os << ", " << *iter;
-    os << ')';
-
-    return os;
-}

@@ -7,7 +7,7 @@ class MyBaseVector {
 public:
     MyBaseVector();
     MyBaseVector(const MyBaseVector&);
-    ~MyBaseVector();
+    virtual ~MyBaseVector() = 0;
 
     bool isEmpty() const;
     int getSize() const;
